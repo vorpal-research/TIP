@@ -32,10 +32,11 @@ trait IntraprocSignAnalysisFunctions {
       case r: CfgStmtNode =>
         r.data match {
           // var declarations
-          case varr: AVarStmt => ??? //<--- Complete here
-
+          case varr: AVarStmt =>
+            s ++ varr.declIds.map {a => a -> statelattice.sublattice.Bot }.toMap
           // assignments
-          case AAssignStmt(id: AIdentifier, right, _) => ??? //<--- Complete here
+          case AAssignStmt(id: AIdentifier, right, _) =>
+            s + (declData(id) -> statelattice.sublattice.eval(right, s))
           case AAssignStmt(_: AUnaryOp[_], _, _) => NoPointers.LanguageRestrictionViolation(s"${r.data} not allowed")
 
           // all others: like no-ops
